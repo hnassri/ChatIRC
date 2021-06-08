@@ -49,11 +49,13 @@ const PORT = process.env.PORT || 4242
 io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('chat', (msg) => {
-        console.log(msg)
+        console.log(msg);
+     
         io.emit("chat message", msg); 
     });
     socket.on('create channel', (msg) => {
-        io.emit('add channel', msg); 
+        console.log('hello');
+        io.emit('add channel', msg);     
     });
     socket.on('delete channel', (msg) => {
         io.emit('delete channel', msg); 
