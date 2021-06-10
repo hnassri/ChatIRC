@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import SocketContext, {socket} from "../context/socket";
+import AuthContext from "../context/auth";
 import VerticalTabs from "../component/Tabs"
 import { Link,Redirect,useHistory  } from "react-router-dom";
 import axios from 'axios';
 const Chat =props => {
     const [message, setMessage] = useState();
     const [channel, setChannel] = useState();
-    const { username, password} =
-    (props.location && props.location.state) || {};
-    console.log({password});
+    const user = JSON.parse(localStorage.getItem("auth"));
     const handleSubmit = (e) => {
         e.preventDefault();
     
@@ -32,7 +31,7 @@ const Chat =props => {
                         socket.emit('chat', message),
                         setMessage(""),
                         e.target.reset(),
-                        axios.post(`http://127.0.0.1:4242/create`, username)
+                        axios.post(`http://127.0.0.1:4242/create`, user)
                         .then(res => {
                         console.log(res.data.greeting);
                     
@@ -42,18 +41,21 @@ const Chat =props => {
                 
          }
     }
-
-    
-    
+    if(!user){
+        return <Redirect to="/login" />
+    }
     return (
-        <SocketContext.Provider value={socket}>
-            <div className="Chat">
-                <VerticalTabs />
-                <form onSubmit={handleSubmit}>
-                    <input onChange={event => setMessage(event.target.value)} placeholder="Entrez votre message" /><button>Send</button>
-                </form>
-            </div>
-        </SocketContext.Provider>
+        <AuthContext.Provider value={user}>
+            <SocketContext.Provider value={socket}>
+                <div className="Chat">
+                    <VerticalTabs />
+                    <form onSubmit={handleSubmit}>
+                        <input onChange={event => setMessage(event.target.value)} placeholder="Entrez votre message" /><button>Send</button>
+                    </form>
+                </div>
+            </SocketContext.Provider>
+        </AuthContext.Provider>
+
     )
 }
 

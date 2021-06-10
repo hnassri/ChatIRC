@@ -33,9 +33,9 @@ const Login =props => {
       console.log(res.data.greeting);
   
       if(res.data.greeting='Vous êtes connectés'){
+        localStorage.setItem("auth", JSON.stringify(user));
         history.push({
           pathname: '/chat',
-          state:user
         })
       }
     })
