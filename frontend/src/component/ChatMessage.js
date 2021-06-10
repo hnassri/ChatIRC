@@ -9,6 +9,7 @@ export default function ChatMessage(props){
             setMessages(messages => [...messages, msg]);
         });
         
+        
     }, []);
 
     return (

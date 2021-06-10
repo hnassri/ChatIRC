@@ -1,20 +1,24 @@
 import React, { useState } from "react";
 import SocketContext, {socket} from "../context/socket";
 import VerticalTabs from "../component/Tabs"
-
-function Chat (){
+import { Link,Redirect,useHistory  } from "react-router-dom";
+import axios from 'axios';
+const Chat =props => {
     const [message, setMessage] = useState();
     const [channel, setChannel] = useState();
+    const { username, password} =
+    (props.location && props.location.state) || {};
+    console.log({password});
     const handleSubmit = (e) => {
         e.preventDefault();
-      
+    
       /*if(message == "/join"){
             
             socket.emit('chat', message),
             setMessage(""),
             e.target.reset()
         }*/
-       
+        
         switch (true) {
             case /^\/create\s.+/.test(message):
                 return(
@@ -25,10 +29,14 @@ function Chat (){
             default:
                 if(message !== ""){ 
                     return(
-                    
                         socket.emit('chat', message),
                         setMessage(""),
-                        e.target.reset()
+                        e.target.reset(),
+                        axios.post(`http://127.0.0.1:4242/create`, username)
+                        .then(res => {
+                        console.log(res.data.greeting);
+                    
+                        })
                     )
                 }
                 

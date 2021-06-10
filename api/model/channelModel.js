@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const userSchema = mongoose.Schema({
+const channelSchema = mongoose.Schema({
 
     user_id: {
         type: String,
@@ -12,12 +12,13 @@ const userSchema = mongoose.Schema({
         required: true
     },
     is_deleted: {
+        type: Boolean,
         required: true
     },
 }, {
     timestamps: true
 })
 
-const Channel = mongoose.model('Channel', userSchema, 'channel')
+const Channel = mongoose.model('Channel', channelSchema, 'channel')
 
-export default User
+export default Channel

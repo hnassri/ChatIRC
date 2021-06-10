@@ -8,6 +8,8 @@ import cors from 'cors'
 import morgan from 'morgan'
 import {Server} from 'socket.io'
 import http from 'http'
+import Channel from './model/channelModel.js'
+import User from './model/userModel.js'
 
 //connect database
 connectDB()
@@ -53,8 +55,22 @@ io.on('connection', (socket) => {
      
         io.emit("chat message", msg); 
     });
-    socket.on('create channel', (msg) => {
-        console.log('hello');
+    socket.on('create channel', async (msg) => {
+        app.post('/create', function(req, res) {
+            let user = User.findOne({username:req.username});
+            console.log(req.body.username);
+                  });
+        
+        try {
+            let result = await Channel.findOne({ name: msg.substr(8) });
+            if(!result) {
+                await Channel.create({ user_id:'jjjj',name:msg.substr(8),is_deleted:0});
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        
+
         io.emit('add channel', msg);     
     });
     socket.on('delete channel', (msg) => {
@@ -65,3 +81,4 @@ io.on('connection', (socket) => {
 
 //Express js listen method to run project on http://localhost:5000
 app.listen(PORT, console.log(`App is running in ${process.env.NODE_ENV} mode on port ${PORT}`))
+

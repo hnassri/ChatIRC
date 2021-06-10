@@ -1,49 +1,45 @@
-import React, { Component } from "react"
-import { Redirect } from "react-router-dom";
+import React, { Component,useState } from "react"
+import { Link,Redirect,useHistory  } from "react-router-dom";
 import axios from 'axios';
+const Login =props => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const history = useHistory()   
+    
 
-class  Login extends Component {
-    constructor(props) {
-        super(props);
     
-        this.state = {
-          username: '',
-          password: '',
-            redirect: null
-        };
-      }
-      
-    
-      handleInputChange = e => {
-        this.setState({
-          [e.target.name]: e.target.value,
-        });
+      const handleSubmit = async e => {
         
-      };
-    
-      handleSubmit = async e => {
         e.preventDefault();
-        this.setState(this.state);
-        const { username,  password} = this.state;
+  
+        /*setState();
+        const { username,  password} = setState();
         const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json'},
           body: JSON.stringify({ username,password})
-      };
+      };*/
       const user={
         username,
         password
       }
-    
+     
       ///const response = await fetch('http://localhost:4242/login', requestOptions);
      // const data =this.setState(await response.json());
    
                
     axios.post(`http://127.0.0.1:4242/login`, user)
     .then(res => {
-      console.log(res);
-      console.log(res.data);
+      console.log(res.data.greeting);
+  
+      if(res.data.greeting='Vous êtes connectés'){
+        history.push({
+          pathname: '/chat',
+          state:user
+        })
+      }
     })
+   
 
   
     
@@ -51,21 +47,20 @@ class  Login extends Component {
       };
     
  
-      render() 
-      {
+      
     
         return (
           <div>
             <br />
             <div className="container">
-              <form onSubmit={this.handleSubmit}>
+              <form onSubmit={handleSubmit}>
                 <div style={{ width: '30%' }} className="form-group">
                   <input
                     type="text"
                     className="form-control"
                     name="username"
                     placeholder="username"
-                    onChange={this.handleInputChange}
+                    onChange={event => setUsername(event.target.value)}
                   />
                 </div>
                
@@ -76,7 +71,7 @@ class  Login extends Component {
                     className="form-control"
                     name="password"
                     placeholder="password"
-                    onChange={this.handleInputChange}
+                    onChange={event => setPassword(event.target.value)}
                   />
                 </div>
                 <br />
@@ -90,7 +85,7 @@ class  Login extends Component {
             </div>
           </div>
         );
-      }
+      
     
       
    
