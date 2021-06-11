@@ -8,6 +8,9 @@ export default function ChatMessage(props){
         socket.on("chat message", function(msg) {
             setMessages(messages => [...messages, msg]);
         });
+        socket.on("add channel", function(msg) {
+         alert(msg);
+        });
         
         
     }, []);

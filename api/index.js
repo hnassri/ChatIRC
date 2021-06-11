@@ -55,23 +55,22 @@ io.on('connection', (socket) => {
      
         io.emit("chat message", msg); 
     });
-    socket.on('create channel', async (msg) => {
-        app.post('/create', function(req, res) {
-            let user = User.findOne({username:req.username});
-            console.log(req.body.username);
-                  });
-        
+    socket.on('create channel', async (data) => {
+       
+          
         try {
-            let result = await Channel.findOne({ name: msg.substr(8) });
+            let user = await User.findOne({username:data.user.username});
+            let result = await Channel.findOne({ name: data.msg.substr(8).trim() });
             if(!result) {
-                await Channel.create({ user_id:'jjjj',name:msg.substr(8),is_deleted:0});
+                await Channel.create({ user_id:user._id,name:data.msg.substr(8).trim(),is_deleted:false});
+                socket.emit('add channel', data.msg.substr(8).trim());
             }
         } catch (e) {
             console.error(e);
         }
         
 
-        io.emit('add channel', msg);     
+             
     });
     socket.on('delete channel', (msg) => {
         io.emit('delete channel', msg); 

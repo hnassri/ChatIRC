@@ -1,15 +1,18 @@
+import User from '../model/userModel.js'
 import mongoose from 'mongoose'
 
+const {ObjectId} = mongoose;
 const channelSchema = mongoose.Schema({
 
-    user_id: {
+    user_id: [{
+        type: ObjectId, 
+        ref:'User',
+        required: true,
+    }],
+    name: {
         type: String,
         required: true,
         unique: true
-    },
-    name: {
-        type: String,
-        required: true
     },
     is_deleted: {
         type: Boolean,

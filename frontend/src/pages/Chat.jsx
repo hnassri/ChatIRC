@@ -20,8 +20,13 @@ const Chat =props => {
         
         switch (true) {
             case /^\/create\s.+/.test(message):
+                const data = {
+                    msg: message,
+                    user: user
+                };
                 return(
-                    socket.emit('create channel', message),
+                    
+                    socket.emit('create channel', data),
                     setMessage(""),
                     e.target.reset()
                 )
@@ -30,12 +35,7 @@ const Chat =props => {
                     return(
                         socket.emit('chat', message),
                         setMessage(""),
-                        e.target.reset(),
-                        axios.post(`http://127.0.0.1:4242/create`, user)
-                        .then(res => {
-                        console.log(res.data.greeting);
-                    
-                        })
+                        e.target.reset()
                     )
                 }
                 
