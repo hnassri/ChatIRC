@@ -35,6 +35,13 @@ export default function ChatMessage(props){
                 alert("Channel don't exist");
             }
            });
+           socket.on("deleteChannel", function(data) {
+            if(data.success === "success"){
+                alert("You are delete channel " + data);
+            }else{
+                alert("Channel don't exist");
+            }
+           });
         
     }, []);
 

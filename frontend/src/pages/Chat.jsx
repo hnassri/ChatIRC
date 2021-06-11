@@ -60,6 +60,16 @@ const Chat =props => {
                         setMessage(""),
                         e.target.reset()
                     )
+                    case '/delete':
+                    const dataDelete= {
+                        channel_name: message.split(' ')[1],
+                        user: user,
+                    }
+                    return(
+                        socket.emit('delete', dataDelete),
+                        setMessage(""),
+                        e.target.reset()
+                    )
             default:
                 if(message !== ""){ 
                     return(

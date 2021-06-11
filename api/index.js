@@ -95,6 +95,24 @@ io.on('connection', (socket) => {
             console.error(e);
         }
      });
+     socket.on('delete' ,async (data) => { 
+       
+        try{
+            const user = await User.findOne({username: data.user.username});
+            const room = await Channel.findOne({name: data.channel_name.trim(),user_id:user._id});
+            const join= await JoinChannel.findOne({user_id: user._id,channel_id:room._id})
+            if(room){
+                        await Channel.findOneAndRemove({name: data.channel_name.trim(),user_id:user._id});
+                        await JoinChannel.findOneAndRemove({channel_id:room._id})
+                        console.log(`Socket delete ${data.channel_name.trim()}`); 
+                        return socket.emit('deleteChannel', {success: 'success', channel_name: data.channel_name.trim()});      
+            }
+
+            socket.emit('deleteChannel', {success: 'failed'});
+        } catch (e) {
+            console.error(e);
+        }
+     });
     socket.on('nick' , async (data) => {
         try{
             const user = await User.findOne({username: data.user.username});
@@ -131,9 +149,7 @@ io.on('connection', (socket) => {
 
              
     });
-    socket.on('delete channel', (msg) => {
-        io.emit('delete channel', msg); 
-    });
+
 
 });
 
