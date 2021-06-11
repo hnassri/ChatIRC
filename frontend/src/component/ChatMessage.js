@@ -21,6 +21,13 @@ export default function ChatMessage(props){
                 alert('Update failed');
             }
            });
+           socket.on("joinChannel", function(data) {
+            if(data.success === "success"){
+                alert("You are join channel " + data);
+            }else{
+                alert('Update failed');
+            }
+           });
         
     }, []);
 

@@ -42,7 +42,8 @@ const Chat =props => {
                 )
             case '/join':
                 const dataJoin= {
-                    channel_name: message.split(' ')[1]
+                    channel_name: message.split(' ')[1],
+                    user: user,
                 }
                 return(
                     socket.emit('join', dataJoin),

@@ -9,6 +9,7 @@ import morgan from 'morgan'
 import {Server} from 'socket.io'
 import http from 'http'
 import Channel from './model/channelModel.js'
+import JoinChannel from './model/joinchannelModel.js'
 import User from './model/userModel.js'
 import { useHistory } from 'react-router-dom'
 
@@ -52,9 +53,29 @@ const PORT = process.env.PORT || 4242
 io.on('connection', (socket) => {
     console.log('a user connected');
     //JOINTURE
-    socket.on('join' , (data) => { 
-        console.log(`Socket ${socket.id} join ${data.channel_name.trim()}`); 
-        socket.join(data.channel_name.trim()) ; 
+    socket.on('join' ,async (data) => { 
+       
+        try{
+            const room = await Channel.findOne({name: data.channel_name.trim()});
+            const user = await User.findOne({username: data.user.username});
+            const join= await JoinChannel.findOne({user_id: user._id,channel_id:room._id})
+            if(!join){
+                if(room && user ){
+                    const joinChannel = await JoinChannel.create({user_id: user._id , channel_id: room._id});
+                    console.log(joinChannel)
+                    if(joinChannel){
+                        console.log(`Socket ${socket.id} join ${data.channel_name.trim()}`); 
+                        socket.join(data.channel_name.trim()) ; 
+                        return socket.emit('joinChannel', {success: 'success', channel_name: data.channel_name.trim()});
+                    }
+                    
+                }
+            }
+
+            socket.emit('joinChannel', {success: 'failed'});
+        } catch (e) {
+            console.error(e);
+        }
      });
     socket.on('nick' , async (data) => {
         try{
