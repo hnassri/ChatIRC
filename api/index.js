@@ -53,8 +53,8 @@ io.on('connection', (socket) => {
     console.log('a user connected');
     //JOINTURE
     socket.on('join' , (data) => { 
-        console.log(`Socket ${socket.id} join ${data.channel_name.substr(6).trim()}`); 
-        socket.join(data.channel_name.substr(6).trim()) ; 
+        console.log(`Socket ${socket.id} join ${data.channel_name.trim()}`); 
+        socket.join(data.channel_name.trim()) ; 
      });
     socket.on('nick' , async (data) => {
         try{
@@ -79,10 +79,10 @@ io.on('connection', (socket) => {
           
         try {
             let user = await User.findOne({username:data.user.username});
-            let result = await Channel.findOne({ name: data.msg.substr(8).trim() });
+            let result = await Channel.findOne({ name: data.msg.trim() });
             if(!result) {
-                await Channel.create({ user_id:user._id,name:data.msg.substr(8).trim(),is_deleted:false});
-                socket.emit('add channel', data.msg.substr(8).trim());
+                await Channel.create({ user_id:user._id,name:data.msg.trim(),is_deleted:false});
+                socket.emit('add channel', data.msg.trim());
             }
         } catch (e) {
             console.error(e);
