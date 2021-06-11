@@ -17,16 +17,35 @@ const Chat =props => {
             setMessage(""),
             e.target.reset()
         }*/
-        
-        switch (true) {
-            case /^\/create\s.+/.test(message):
-                const data = {
-                    msg: message,
+        switch (message.split(' ')[0]) {
+            case '/nick':
+                const nick = {
+                    name: message.split(' ')[1],
                     user: user
                 };
                 return(
                     
+                    socket.emit('nick', nick),
+                    setMessage(""),
+                    e.target.reset()
+                )
+            case '/create':
+                const data = {
+                    msg: message.split(' ')[1],
+                    user: user
+                }
+                return(
+                    
                     socket.emit('create channel', data),
+                    setMessage(""),
+                    e.target.reset()
+                )
+            case '/join':
+                const dataJoin= {
+                    channel_name: message.split(' ')[1]
+                }
+                return(
+                    socket.emit('join', dataJoin),
                     setMessage(""),
                     e.target.reset()
                 )

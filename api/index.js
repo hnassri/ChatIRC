@@ -10,6 +10,7 @@ import {Server} from 'socket.io'
 import http from 'http'
 import Channel from './model/channelModel.js'
 import User from './model/userModel.js'
+import { useHistory } from 'react-router-dom'
 
 //connect database
 connectDB()
@@ -50,6 +51,24 @@ const PORT = process.env.PORT || 4242
 
 io.on('connection', (socket) => {
     console.log('a user connected');
+    //JOINTURE
+    socket.on('join' , (data) => { 
+        console.log(`Socket ${socket.id} join ${data.channel_name.substr(6).trim()}`); 
+        socket.join(data.channel_name.substr(6).trim()) ; 
+     });
+    socket.on('nick' , async (data) => {
+        try{
+            const user = await User.findOne({username: data.user.username});
+            if(user){
+                await User.findOneAndUpdate({username: data.user.username}, {username: data.name});
+                return socket.emit('nickname update', {success: 'success', username: data.name});
+            }
+            socket.emit('nickname update', {success: 'failed'});
+        } catch (e) {
+            console.error(e);
+        }
+        
+    });
     socket.on('chat', (msg) => {
         console.log(msg);
      
@@ -68,6 +87,7 @@ io.on('connection', (socket) => {
         } catch (e) {
             console.error(e);
         }
+ 
         
 
              

@@ -11,7 +11,16 @@ export default function ChatMessage(props){
         socket.on("add channel", function(msg) {
          alert(msg);
         });
-        
+        socket.on("nickname update", function(data) {
+            if(data.success === "success"){
+                alert("Your nickname has been updated");
+                const user = JSON.parse(localStorage.getItem("auth"));
+                user.username = data.username;
+                localStorage.setItem("auth", JSON.stringify(user));
+            }else{
+                alert('Update failed');
+            }
+           });
         
     }, []);
 
