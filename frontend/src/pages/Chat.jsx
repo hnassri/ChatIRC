@@ -50,6 +50,16 @@ const Chat =props => {
                     setMessage(""),
                     e.target.reset()
                 )
+                case '/leave':
+                    const dataLeave= {
+                        channel_name: message.split(' ')[1],
+                        user: user,
+                    }
+                    return(
+                        socket.emit('leave', dataLeave),
+                        setMessage(""),
+                        e.target.reset()
+                    )
             default:
                 if(message !== ""){ 
                     return(

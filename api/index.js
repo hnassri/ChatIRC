@@ -77,6 +77,24 @@ io.on('connection', (socket) => {
             console.error(e);
         }
      });
+     socket.on('leave' ,async (data) => { 
+       
+        try{
+            const room = await Channel.findOne({name: data.channel_name.trim()});
+            const user = await User.findOne({username: data.user.username});
+            const join= await JoinChannel.findOne({user_id: user._id,channel_id:room._id})
+            if(join){
+                        await JoinChannel.findOneAndRemove({user_id: user._id,channel_id:room._id});
+                        console.log(`Socket ${socket.id} leave ${data.channel_name.trim()}`); 
+                        socket.leave(data.channel_name.trim()) ; 
+                        return socket.emit('leaveChannel', {success: 'success', channel_name: data.channel_name.trim()});      
+            }
+
+            socket.emit('leaveChannel', {success: 'failed'});
+        } catch (e) {
+            console.error(e);
+        }
+     });
     socket.on('nick' , async (data) => {
         try{
             const user = await User.findOne({username: data.user.username});

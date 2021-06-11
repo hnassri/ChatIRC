@@ -28,6 +28,13 @@ export default function ChatMessage(props){
                 alert('Update failed');
             }
            });
+        socket.on("leaveChannel", function(data) {
+            if(data.success === "success"){
+                alert("You are leave channel " + data);
+            }else{
+                alert("Channel don't exist");
+            }
+           });
         
     }, []);
 
