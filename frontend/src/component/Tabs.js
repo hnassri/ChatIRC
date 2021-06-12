@@ -6,6 +6,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import ChatMessage from "../component/ChatMessage"
+import SocketContext from "../context/socket"
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,11 +55,67 @@ const useStyles = makeStyles((theme) => ({
 
 export default function VerticalTabs() {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState("");
+  const [channels, setChannels] = React.useState([]);
+  const socket = React.useContext(SocketContext);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  React.useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("auth"));
+    const getChannels = () => {
+      const data = {
+        username: user.username
+      };
+      socket.emit("get channels", data);
+    }
+    socket.on("channels joined", function(data) {
+        if(data.success === "success"){
+            console.log("Mise à jour de vos channels réussis");
+            setChannels(data.channels);
+        }else{
+            alert('Erreur dans la mise à jour de vos channels');
+        }
+    });
+    socket.on("nickname update", function(data) {
+        if(data.success === "success"){
+            alert("Your nickname has been updated");
+            user.username = data.username;
+            localStorage.setItem("auth", JSON.stringify(user));
+        }else{
+            alert('Update failed');
+        }
+    });
+    socket.on("joinChannel", function(data) {
+        if(data.success === "success"){
+            alert("You are join channel " + data.channel_name);
+            getChannels();
+        }else{
+            alert('Update failed');
+        }
+    });
+    socket.on("leaveChannel", function(data) {
+        if(data.success === "success"){
+            alert("You are leave channel " + data);
+        }else{
+            alert("Channel don't exist");
+        }
+       });
+    socket.on("deleteChannel", function(data) {
+        if(data.success === "success"){
+            alert("You are delete channel " + data);
+        }else{
+            alert("Channel don't exist");
+        }
+    });
+    socket.on("add channel", function(msg) {
+        alert(msg);
+    });
+    getChannels();
+}, []);
+
 
   return (
     <div className={classes.root}>
@@ -70,35 +127,19 @@ export default function VerticalTabs() {
         aria-label="Vertical tabs example"
         className={classes.tabs}
       >
-        <Tab label="Item One" {...a11yProps(0)} />
-        <Tab label="Item Two" {...a11yProps(1)} />
-        <Tab label="Item Three" {...a11yProps(2)} />
-        <Tab label="Item Four" {...a11yProps(3)} />
-        <Tab label="Item Five" {...a11yProps(4)} />
-        <Tab label="Item Six" {...a11yProps(5)} />
-        <Tab label="Item Seven" {...a11yProps(6)} />
+        {channels.map((channel, index) => {
+          return(
+            <Tab label={channel} {...a11yProps(index)} key={"tab-" + index}/>
+          )
+        })}
       </Tabs>
-      <TabPanel value={value} index={0}>
-        <ChatMessage />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        Item Two
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        Item Three
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        Item Four
-      </TabPanel>
-      <TabPanel value={value} index={4}>
-        Item Five
-      </TabPanel>
-      <TabPanel value={value} index={5}>
-        Item Six
-      </TabPanel>
-      <TabPanel value={value} index={6}>
-        Item Seven
-      </TabPanel>
+      {channels.map((channel, index) => {
+          return(
+            <TabPanel value={channel.name} index={index} key={"tab-panel-" + index}>
+              <ChatMessage />
+            </TabPanel>
+          )
+      })}
     </div>
   );
 }
