@@ -32,7 +32,7 @@ const Login =props => {
     .then(res => {
       console.log(res.data.greeting);
   
-      if(res.data.greeting='Vous êtes connectés'){
+      if(res.data.greeting === 'Vous êtes connectés'){
         localStorage.setItem("auth", JSON.stringify(user));
         history.push({
           pathname: '/chat',
