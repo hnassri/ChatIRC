@@ -98,7 +98,8 @@ export default function VerticalTabs() {
     });
     socket.on("leaveChannel", function(data) {
         if(data.success === "success"){
-            alert("You are leave channel " + data);
+            alert("You are leave channel " + data.channel_name);
+            getChannels();
         }else{
             alert("Channel don't exist");
         }
@@ -111,7 +112,11 @@ export default function VerticalTabs() {
         }
     });
     socket.on("add channel", function(msg) {
-        alert(msg);
+        alert("You have create " + msg + " channel");
+        socket.emit('join', {
+          channel_name: msg,
+          user: user
+      });
     });
     getChannels();
 }, []);
