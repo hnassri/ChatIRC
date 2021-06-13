@@ -66,6 +66,34 @@ const Chat =props => {
                         setMessage(""),
                         e.target.reset()
                     )
+                    case '/users':
+                        const dataUsers= {
+                            channel_name: message.split(' ')[1],
+                        }
+                        return(
+                            socket.emit('users', dataUsers),
+                            setMessage(""),
+                            e.target.reset()
+                        )
+                        case '/list':
+                            const dataList= {
+                                channel_name: message.split(' ')[1],
+                            }
+                            return(
+                                socket.emit('list', dataList),
+                                setMessage(""),
+                                e.target.reset()
+                            )
+                            case '/msg':
+                            const datamsg= {
+                               message: message,
+                               user: user
+                            }
+                            return(
+                                socket.emit('msg', datamsg),
+                                setMessage(""),
+                                e.target.reset()
+                            )
             default:
                 if(message !== "" && channel !== ""){ 
                     return(
@@ -88,6 +116,8 @@ const Chat =props => {
                     <form onSubmit={handleSubmit}>
                         <input onChange={event => setMessage(event.target.value)} placeholder="Entrez votre message" /><button>Send</button>
                     </form>
+                </div>
+                <div>
                 </div>
             </SocketContext.Provider>
         </AuthContext.Provider>

@@ -11,6 +11,7 @@ import http from 'http'
 import Channel from './model/channelModel.js'
 import JoinChannel from './model/joinchannelModel.js'
 import User from './model/userModel.js'
+import PrivateMsg from './model/privatemsgModel.js'
 
 //connect database
 connectDB()
@@ -150,6 +151,45 @@ io.on('connection', (socket) => {
     socket.on('chat', (data) => {
         const msg = `${data.username} : ${data.message}`;
         io.to(data.channel).emit(data.channel, msg); 
+    });
+    socket.on('msg', async (msg) => {
+      const l=msg.message.substr(5);
+      const h=l.split(' ')[0];
+     const longueur =h.length+1;
+    const word=l.substr(longueur);
+    try{
+        const user = await User.findOne({username:h});
+        console.log(user)
+            if(user){
+                const users = await User.findOne({username: msg.user.username});
+                 await PrivateMsg.create({scender_id: user._id,message:word,receiver_id:users._id});
+                return socket.emit('privatemsg', {success: 'success'});
+            }
+            socket.emit('privatemsg', {success: 'failed'});
+    }catch(e){
+        console.log(e);
+    }
+     
+    });
+
+
+//list channel
+    socket.on('list', async (msg) => {
+
+try{
+        let user = await Channel.find({});
+        user.forEach(function(col) {
+            // Do something with each collection.
+            if(col.name.includes(msg.channel_name.trim())){
+                console.log(col.name)
+                return socket.emit('listChannel', {success: 'success', channels: col.name}); 
+            }       
+        
+        });
+        socket.emit('listChannel', {success: 'failed'}); 
+    }catch (e) {
+        console.error(e);
+    }
     });
     socket.on('create channel', async (data) => {
        

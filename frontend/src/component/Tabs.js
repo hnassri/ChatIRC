@@ -113,6 +113,20 @@ export default function VerticalTabs(props) {
             alert("Channel don't exist");
         }
     });
+    socket.on("listChannel", function(data) {
+      if(data.success === "success"){
+          alert("channel " + data.channels);
+      }else{
+          alert("we have. no channel with this name");
+      }
+  });
+  socket.on("privatemsg", function(data) {
+    if(data.success === "success"){
+        alert("msg send");
+    }else{
+        alert("msg not send");
+    }
+});
     socket.on("add channel", function(msg) {
         alert("You have create " + msg + " channel");
         socket.emit('join', {
