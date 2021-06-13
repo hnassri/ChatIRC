@@ -46,54 +46,54 @@ const Chat =props => {
                     setMessage(""),
                     e.target.reset()
                 )
-                case '/leave':
-                    const dataLeave= {
-                        channel_name: message.split(' ')[1],
-                        user: user,
-                    }
-                    return(
-                        socket.emit('leave', dataLeave),
-                        setMessage(""),
-                        e.target.reset()
-                    )
-                    case '/delete':
-                    const dataDelete= {
-                        channel_name: message.split(' ')[1],
-                        user: user,
-                    }
-                    return(
-                        socket.emit('delete', dataDelete),
-                        setMessage(""),
-                        e.target.reset()
-                    )
-                    case '/users':
-                        const dataUsers= {
-                            channel_name: message.split(' ')[1],
-                        }
-                        return(
-                            socket.emit('users', dataUsers),
-                            setMessage(""),
-                            e.target.reset()
-                        )
-                        case '/list':
-                            const dataList= {
-                                channel_name: message.split(' ')[1],
-                            }
-                            return(
-                                socket.emit('list', dataList),
-                                setMessage(""),
-                                e.target.reset()
-                            )
-                            case '/msg':
-                            const datamsg= {
-                               message: message,
-                               user: user
-                            }
-                            return(
-                                socket.emit('msg', datamsg),
-                                setMessage(""),
-                                e.target.reset()
-                            )
+            case '/leave':
+                const dataLeave= {
+                    channel_name: message.split(' ')[1],
+                    user: user,
+                }
+                return(
+                    socket.emit('leave', dataLeave),
+                    setMessage(""),
+                    e.target.reset()
+                )
+            case '/delete':
+            const dataDelete= {
+                channel_name: message.split(' ')[1],
+                user: user,
+            }
+            return(
+                socket.emit('delete', dataDelete),
+                setMessage(""),
+                e.target.reset()
+            )
+            case '/users':
+                const dataUsers= {
+                    channel_name: message.split(' ')[1],
+                }
+                return(
+                    socket.emit('users', dataUsers),
+                    setMessage(""),
+                    e.target.reset()
+                )
+            case '/list':
+                const dataList= {
+                    channel_name: message.split(' ')[1],
+                }
+                return(
+                    socket.emit('list', dataList),
+                    setMessage(""),
+                    e.target.reset()
+                )
+            case '/msg':
+            const datamsg= {
+                message: message,
+                user: user
+            }
+            return(
+                socket.emit('msg', datamsg),
+                setMessage(""),
+                e.target.reset()
+            )
             default:
                 if(message !== "" && channel !== ""){ 
                     return(

@@ -5,15 +5,27 @@ export default function ChatMessage({channel}){
     const socket = React.useContext(SocketContext);
     const [messages, setMessages] = useState([]);
     React.useEffect(() => {
-        socket.on(channel, function(msg) {
-            setMessages(messages => [...messages, msg]);
+        const getMessages = () => {
+            const data = {
+                channel: channel
+            }
+            socket.emit("get chat messages", data);
+        }
+        socket.on(`messages of ${channel}`, function(msg){
+            setMessages(msg);
+        })
+        socket.on(channel, function(data) {
+            if(data.success === "success"){
+                getMessages();
+            }
         });
+        getMessages();
     }, []);
 
     return (
         <ul className="ChatMessage">
             {messages.map((msg, index) => {
-                return <li key={index}>{msg}</li>
+                return <li key={index}>{msg.message}</li>
             })}
         </ul>
     )

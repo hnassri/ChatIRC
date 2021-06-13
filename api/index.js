@@ -11,6 +11,7 @@ import http from 'http'
 import Channel from './model/channelModel.js'
 import JoinChannel from './model/joinchannelModel.js'
 import User from './model/userModel.js'
+import Message from './model/messageModel.js'
 import PrivateMsg from './model/privatemsgModel.js'
 
 //connect database
@@ -148,9 +149,32 @@ io.on('connection', (socket) => {
         }
         
     });
-    socket.on('chat', (data) => {
-        const msg = `${data.username} : ${data.message}`;
-        io.to(data.channel).emit(data.channel, msg); 
+    socket.on('chat', async (data) => {
+        const user = await User.findOne({username: data.username.trim()});
+        const channel = await Channel.findOne({name: data.channel.trim()});
+        if(user && channel){
+            
+            const msg = `${data.username} : ${data.message}`;
+            const message = await Message.create({
+                user_id: user._id,
+                channel_id: channel._id,
+                message: msg
+            });
+            if(message){
+                console.log("message créé");
+                io.to(data.channel).emit(data.channel, {success: "success"}); 
+            }
+            
+        }
+        
+    });
+    socket.on('get chat messages', async (data) => {
+        const channel = await Channel.findOne({name: data.channel.trim()});
+        if(channel){
+            const messages = await Message.find({channel_id: channel._id});
+            io.to(data.channel).emit(`messages of ${data.channel}`, messages); 
+        }
+        
     });
     socket.on('msg', async (msg) => {
       const l=msg.message.substr(5);
