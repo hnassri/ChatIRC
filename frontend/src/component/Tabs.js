@@ -46,10 +46,14 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
     display: 'flex',
-    height: 224,
+    height: "93vh",
+    width: "50vh"
   },
   tabs: {
     borderRight: `1px solid ${theme.palette.divider}`,
+  },
+  tab_panel: {
+    overflow: "scroll",
   },
 }));
 
@@ -156,7 +160,7 @@ export default function VerticalTabs(props) {
       </Tabs>
       {channels.map((channel, index) => {
           return(
-            <TabPanel value={value} index={index} key={"tab-panel-" + index}>
+            <TabPanel value={value} index={index} key={"tab-panel-" + index} className={classes.tab_panel}>
               <h3>{channel}</h3>
               <ChatMessage channel={channel} />
             </TabPanel>
