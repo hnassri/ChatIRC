@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import SocketContext from "../context/socket";
 
-export default function ChatMessage(props){
+export default function ChatMessage({channel}){
     const socket = React.useContext(SocketContext);
     const [messages, setMessages] = useState([]);
     React.useEffect(() => {
-        socket.on("chat message", function(msg) {
+        socket.on(channel, function(msg) {
             setMessages(messages => [...messages, msg]);
         });
     }, []);

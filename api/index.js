@@ -134,23 +134,11 @@ io.on('connection', (socket) => {
                 for(let i = 0; i < channelsJoined.length; i++){
                     const element = channelsJoined[i];
                     const channel = await Channel.findById(element.channel_id).exec();
-                    console.log(channel);
-                    console.log("hello")
                     if(channel){
                         channels_name.push(channel.name);
+                        socket.join(channel.name);
                     } 
                 }
-                /*await channelsJoined.forEach(async (element) => {
-                    console.log(element)
-                    const channel = await Channel.findById(element.channel_id).exec();
-                    console.log(channel);
-                    console.log("hello")
-                    if(channel){
-                        channels_name.push(channel.name);
-                    }
-                    
-                });*/
-                console.log(channels_name);
                 return socket.emit('channels joined', {success: 'success', channels: channels_name});
             }
             socket.emit('channels joined', {success: 'failed'});
@@ -159,10 +147,9 @@ io.on('connection', (socket) => {
         }
         
     });
-    socket.on('chat', (msg) => {
-        console.log(msg);
-     
-        io.emit("chat message", msg); 
+    socket.on('chat', (data) => {
+        const msg = `${data.username} : ${data.message}`;
+        io.to(data.channel).emit(data.channel, msg); 
     });
     socket.on('create channel', async (data) => {
        

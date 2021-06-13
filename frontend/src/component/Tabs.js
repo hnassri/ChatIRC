@@ -53,14 +53,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function VerticalTabs() {
+export default function VerticalTabs(props) {
   const classes = useStyles();
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState(0);
   const [channels, setChannels] = React.useState([]);
   const socket = React.useContext(SocketContext);
+  const {channelToUse} = props;
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    channelToUse(channels[newValue]);
   };
 
   React.useEffect(() => {
@@ -140,8 +142,9 @@ export default function VerticalTabs() {
       </Tabs>
       {channels.map((channel, index) => {
           return(
-            <TabPanel value={channel.name} index={index} key={"tab-panel-" + index}>
-              <ChatMessage />
+            <TabPanel value={value} index={index} key={"tab-panel-" + index}>
+              <h3>{channel}</h3>
+              <ChatMessage channel={channel} />
             </TabPanel>
           )
       })}

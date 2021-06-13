@@ -5,18 +5,14 @@ import VerticalTabs from "../component/Tabs"
 import { Link,Redirect,useHistory  } from "react-router-dom";
 import axios from 'axios';
 const Chat =props => {
-    const [message, setMessage] = useState();
-    const [channel, setChannel] = useState();
+    const [message, setMessage] = useState("");
+    const [channel, setChannel] = useState("");
     const user = JSON.parse(localStorage.getItem("auth"));
+    const channelToUseCallback = (channel) => {
+        setChannel(channel);
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
-    
-      /*if(message == "/join"){
-            
-            socket.emit('chat', message),
-            setMessage(""),
-            e.target.reset()
-        }*/
         switch (message.split(' ')[0]) {
             case '/nick':
                 const nick = {
@@ -71,9 +67,9 @@ const Chat =props => {
                         e.target.reset()
                     )
             default:
-                if(message !== ""){ 
+                if(message !== "" && channel !== ""){ 
                     return(
-                        socket.emit('chat', message),
+                        socket.emit('chat', {message: message, channel: channel, username: user.username}),
                         setMessage(""),
                         e.target.reset()
                     )
@@ -88,7 +84,7 @@ const Chat =props => {
         <AuthContext.Provider value={user}>
             <SocketContext.Provider value={socket}>
                 <div className="Chat">
-                    <VerticalTabs />
+                    <VerticalTabs channelToUse={channelToUseCallback}/>
                     <form onSubmit={handleSubmit}>
                         <input onChange={event => setMessage(event.target.value)} placeholder="Entrez votre message" /><button>Send</button>
                     </form>
