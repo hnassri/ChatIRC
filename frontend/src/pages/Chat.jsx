@@ -4,13 +4,16 @@ import AuthContext from "../context/auth";
 import VerticalTabs from "../component/Tabs"
 import { Link,Redirect,useHistory  } from "react-router-dom";
 import axios from 'axios';
+import '../App.css';
 const Chat =props => {
     const [message, setMessage] = useState("");
     const [channel, setChannel] = useState("");
+    const [notification, setNotification] = useState("");
     const user = JSON.parse(localStorage.getItem("auth"));
     const channelToUseCallback = (channel) => {
         setChannel(channel);
     };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         switch (message.split(' ')[0]) {
@@ -24,6 +27,7 @@ const Chat =props => {
                     socket.emit('nick', nick),
                     setMessage(""),
                     e.target.reset()
+                 
                 )
             case '/create':
                 const data = {
@@ -45,6 +49,7 @@ const Chat =props => {
                     socket.emit('join', dataJoin),
                     setMessage(""),
                     e.target.reset()
+                   
                 )
             case '/leave':
                 const dataLeave= {
@@ -65,6 +70,7 @@ const Chat =props => {
                 socket.emit('delete', dataDelete),
                 setMessage(""),
                 e.target.reset()
+                
             )
             case '/users':
                 const dataUsers= {
@@ -93,6 +99,7 @@ const Chat =props => {
                 socket.emit('msg', datamsg),
                 setMessage(""),
                 e.target.reset()
+
             )
             default:
                 if(message !== "" && channel !== ""){ 
@@ -109,18 +116,22 @@ const Chat =props => {
         return <Redirect to="/login" />
     }
     return (
+        <div>
         <AuthContext.Provider value={user}>
             <SocketContext.Provider value={socket}>
                 <div className="Chat">
-                    <VerticalTabs channelToUse={channelToUseCallback}/>
+                    <VerticalTabs channelToUse={channelToUseCallback} setNotification={setNotification}/>
                     <form onSubmit={handleSubmit}>
                         <input onChange={event => setMessage(event.target.value)} placeholder="Entrez votre message" /><button>Send</button>
                     </form>
                 </div>
-                <div>
+                <div className="onglet">
+                    <p>{notification}</p>
                 </div>
             </SocketContext.Provider>
         </AuthContext.Provider>
+        </div>
+        
 
     )
 }
