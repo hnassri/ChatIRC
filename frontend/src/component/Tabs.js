@@ -118,6 +118,13 @@ export default function VerticalTabs() {
           alert("we have. no channel with this name");
       }
   });
+  socket.on("privatemsg", function(data) {
+    if(data.success === "success"){
+        alert("msg send");
+    }else{
+        alert("msg not send");
+    }
+});
     socket.on("add channel", function(msg) {
         alert("You have create " + msg + " channel");
         socket.emit('join', {

@@ -88,6 +88,16 @@ const Chat =props => {
                                 setMessage(""),
                                 e.target.reset()
                             )
+                            case '/msg':
+                            const datamsg= {
+                               message: message,
+                               user: user
+                            }
+                            return(
+                                socket.emit('msg', datamsg),
+                                setMessage(""),
+                                e.target.reset()
+                            )
             default:
                 if(message !== ""){ 
                     return(
