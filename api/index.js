@@ -164,6 +164,23 @@ io.on('connection', (socket) => {
      
         io.emit("chat message", msg); 
     });
+    socket.on('list', async (msg) => {
+
+try{
+        let user = await Channel.find({});
+        user.forEach(function(col) {
+            // Do something with each collection.
+            if(col.name.includes(msg.channel_name.trim())){
+                console.log(col.name)
+                return socket.emit('listChannel', {success: 'success', channels: col.name}); 
+            }       
+        
+        });
+        socket.emit('listChannel', {success: 'failed'}); 
+    }catch (e) {
+        console.error(e);
+    }
+    });
     socket.on('create channel', async (data) => {
        
           
