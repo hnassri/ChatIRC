@@ -58,8 +58,8 @@ export default function VerticalTabs(props) {
   const [value, setValue] = React.useState(0);
   const [channels, setChannels] = React.useState([]);
   const socket = React.useContext(SocketContext);
-  const {channelToUse} = props;
-
+  const {channelToUse,setNotification} = props;
+  
   const handleChange = (event, newValue) => {
     setValue(newValue);
     channelToUse(channels[newValue]);
@@ -75,64 +75,67 @@ export default function VerticalTabs(props) {
     }
     socket.on("channels joined", function(data) {
         if(data.success === "success"){
-            console.log("Mise à jour de vos channels réussis");
+            setNotification("Mise à jour de vos channels réussis");
             setChannels(data.channels);
         }else{
-            alert('Erreur dans la mise à jour de vos channels');
+            setNotification('Erreur dans la mise à jour de vos channels');
         }
     });
+    //nick
     socket.on("nickname update", function(data) {
+      if(data.success === "success"){
+          setNotification("Your nickname has been updated");
+          user.username = data.username;
+          localStorage.setItem("auth", JSON.stringify(user));
+      }else{
+          setNotification('Update of your nickname failed');
+      }
+  });
+        socket.on("joinChannel", function(data) {
+          if(data.success === "success"){
+            setNotification(" You are join channel " + data.channel_name);
+            getChannels();
+          }else{
+              setNotification("The name of channel don't exist ");
+          }
+      });
+      socket.on("leaveChannel", function(data) {
         if(data.success === "success"){
-            alert("Your nickname has been updated");
-            user.username = data.username;
-            localStorage.setItem("auth", JSON.stringify(user));
-        }else{
-            alert('Update failed');
-        }
-    });
-    socket.on("joinChannel", function(data) {
-        if(data.success === "success"){
-            alert("You are join channel " + data.channel_name);
+            setNotification("You are leave channel " + data.channel_name);
             getChannels();
         }else{
-            alert('Update failed');
-        }
-    });
-    socket.on("leaveChannel", function(data) {
-        if(data.success === "success"){
-            alert("You are leave channel " + data.channel_name);
-            getChannels();
-        }else{
-            alert("Channel don't exist");
+            setNotification("Channel don't exist or you have not joined this channel");
         }
        });
-    socket.on("deleteChannel", function(data) {
+       socket.on("deleteChannel", function(data) {
         if(data.success === "success"){
-            alert("You are delete channel " + data);
+            setNotification("You are delete channel " + data);
+            getChannels();
         }else{
-            alert("Channel don't exist");
+            setNotification("Channel don't exist");
         }
+
     });
     socket.on("listChannel", function(data) {
       if(data.success === "success"){
-          alert("channel " + data.channels);
+          setNotification("channel " + data.channels);
       }else{
-          alert("we have. no channel with this name");
+          setNotification("we have. no channel with this name");
       }
   });
-  socket.on("privatemsg", function(data) {
-    if(data.success === "success"){
-        alert("msg send");
-    }else{
-        alert("msg not send");
-    }
-});
+    socket.on("privatemsg", function(data) {
+      if(data.success === "success"){
+          setNotification("you have send message");
+      }else{
+          setNotification("message not send");
+      }
+  });
     socket.on("add channel", function(msg) {
-        alert("You have create " + msg + " channel");
-        socket.emit('join', {
-          channel_name: msg,
-          user: user
-      });
+      setNotification("You have create " + msg + " channel");
+      socket.emit('join', {
+        channel_name: msg,
+        user: user
+    });
     });
     getChannels();
 }, []);

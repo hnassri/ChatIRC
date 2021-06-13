@@ -201,8 +201,8 @@ io.on('connection', (socket) => {
     socket.on('list', async (msg) => {
 
 try{
-        let user = await Channel.find({});
-        user.forEach(function(col) {
+        let channel = await Channel.find({});
+        channel.forEach(function(col) {
             // Do something with each collection.
             if(col.name.includes(msg.channel_name.trim())){
                 console.log(col.name)
